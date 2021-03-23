@@ -52,12 +52,12 @@ export default {
   data() {
     return {
       imgs: [],
-      query: "Coffee",
+      query: "Corgi",
       prevQuery: "",
       pageNum: 1,
       hits: "",
-      moreImgs: true,
-      perPage: "40"
+      moreImgs: false,
+      perPage: "30"
     };
   },
   computed: {},
@@ -89,10 +89,14 @@ export default {
       )
         .then(res => res.json())
         .then(json => {
-          this.moreImgs = true;
           this.prevQuery = this.query;
           this.imgs = json.hits;
           this.hits = json.total;
+          if (json.hits.length >= parseInt(this.perPage)) {
+            this.moreImgs = true;
+          } else {
+            this.moreImgs = false;
+          }
         });
     },
     loadNext: function() {
@@ -108,7 +112,10 @@ export default {
         .then(res => res.json())
         .then(json => {
           this.imgs.push(...json.hits);
-          if (json.hits.length < this.perPage) {
+          console.log(json.hits.length);
+          if (json.hits.length >= parseInt(this.perPage)) {
+            this.moreImgs = true;
+          } else {
             this.moreImgs = false;
           }
         });
@@ -169,6 +176,7 @@ img {
   opacity: 0;
   border-radius: 5px;
   overflow: hidden;
+  user-select: none;
 }
 .img-wrapper:before {
   content: "";
